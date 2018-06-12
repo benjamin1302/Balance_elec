@@ -189,7 +189,8 @@
 INT_VAR UDATA_ACS
 RESULTHI RES 1
 RESULTLO RES 1 
-POID RES 1
+MASSEHI RES 1
+MASSELO RES 1
 ;*******************************************************************************
 ; Reset Vector
  
@@ -251,12 +252,6 @@ MAIN_PROG CODE                      ; let linker place main program
 
 DEBUT
 
-    ; TODO Step #5 - Insert Your Program Here
-
-    MOVLW 0x55                      ; your instructions
-    ;This code block configures the ADC
-;for polling, Vdd and Vss as reference, Frc
-;clock and AN0 input.
 
     
     
@@ -280,7 +275,21 @@ ADCPoll
 ; RESULTHI and 8 LSbits in RESULTLO
     MOVFF ADRESH,RESULTHI
     MOVFF ADRESL,RESULTLO
-        
+    
+    MOVLW d'121'
+    SUBWF RESULTLO, 1
+    BTFSS STATUS,C  
+    DECF RESULTHI
+    
+    
+    MOVF RESULTLO, 0
+    ADDWF RESULTLO
+    BTFSC STATUS,C
+    INCF RESULTHI
+    MOVF RESULTHI, 0
+    ADDWF RESULTHI
+    
+	
     GOTO DEBUT                          ; loop forever
 
     END
